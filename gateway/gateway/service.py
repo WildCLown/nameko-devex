@@ -1,4 +1,4 @@
-import json
+import json, logging
 
 from marshmallow import ValidationError
 from nameko import config
@@ -7,9 +7,10 @@ from nameko.rpc import RpcProxy
 from werkzeug import Response
 
 from gateway.entrypoints import http
-from gateway.exceptions import OrderNotFound, ProductNotFound
+from gateway.exceptions import OrderNotFound, ProductNotFound, ProductInvalidArgument
 from gateway.schemas import CreateOrderSchema, GetOrderSchema, ProductSchema
 
+logger = logging.getLogger(__name__)
 
 class GatewayService(object):
     """
@@ -31,6 +32,17 @@ class GatewayService(object):
         product = self.products_rpc.get(product_id)
         return Response(
             ProductSchema().dumps(product).data,
+            mimetype='application/json'
+        )
+    
+    @http(
+        "GET", "/products/delete/<string:product_id>",
+        expected_exceptions=ProductInvalidArgument
+    ) # FIX TO SET AS DELETE LATER
+    def delete_product(self, request, product_id):
+        self.products_rpc.delete_one(product_id)
+        return Response(
+            json.dumps({'status': 'ok'}),
             mimetype='application/json'
         )
 

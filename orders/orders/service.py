@@ -21,6 +21,17 @@ class OrdersService:
             raise NotFound('Order with id {} not found'.format(order_id))
 
         return OrderSchema().dump(order).data
+    
+    @rpc
+    def dumb_list(self, *orders_id):
+        # Realy, don't use it... it's an emergency method if I can't find in doc :|
+        # Let's be honest, if was supposed to be in pure SQL, was something like SELECT (db.fields) FROM Orders O WHERE O.id IN (fields list) which will be optimal
+        orders_list = []
+        for order_id in orders_id:
+            order = self.db.query(Order).get(order_id)
+            if order is not None:
+                list.append(order)
+        return orders_list
 
     @rpc
     def create_order(self, order_details):

@@ -1,7 +1,7 @@
 pipeline {
     agent {
-        docker { 
-            image 'devcontainer:dev' 
+        docker {
+            image 'devcontainer:dev'
         }
     }
 
@@ -34,7 +34,7 @@ pipeline {
     stages {
         stage('Prepare Dev Env') {
             parallel {
-                stage('Create Dev Conda Env'){                   
+                stage('Create Dev Conda Env'){
                     steps {
                         script {
                             if (currentBuild.number == 1) {
@@ -46,12 +46,12 @@ pipeline {
                             if (!params.PREFIX?.trim()) {
                                 env.PREFIX = sh(returnStdout: true, script: 'echo ${BUILD_TAG} | md5sum | cut -c -10').trim()
                             }
-                        }      
-                                           
+                        }
+
                         sh '''#!/bin/bash
                             conda env create -f environment_dev.yml > conda_create.log
                         '''
-                    }                    
+                    }
                 }
                 stage('Start Local BackServices') {
                     steps {
@@ -63,7 +63,7 @@ pipeline {
                             rabbitmq-plugins enable rabbitmq_management
                             rabbitmqctl add_user "rabbit" "rabbit"
                             rabbitmqctl set_user_tags rabbit administrator
-                            rabbitmqctl set_permissions --vhost '/' 'rabbit' '.' '.' '.' 
+                            rabbitmqctl set_permissions --vhost '/' 'rabbit' '.' '.' '.'
 
                             echo "Starting Redis Service"
                             source activate redis
@@ -186,7 +186,7 @@ pipeline {
                         '''
                     }
 
-                }             
+                }
             }
         }
     }

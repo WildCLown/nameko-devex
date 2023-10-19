@@ -42,6 +42,13 @@ class StorageWrapper:
             raise NotFound('Product ID {} does not exist'.format(product_id))
         else:
             return self._from_hash(product)
+        
+    def delete_one(self, product_id): # Will try solving it later, but near here
+        product = self.client.hgetall(self._format_key(product_id))
+        if product is None:
+            raise NotFound('Product ID {} does not exist'.format(product_id))
+        else:
+            self.client.delete(product_id)
 
     def list(self):
         keys = self.client.keys(self._format_key('*'))
