@@ -23,15 +23,17 @@ class OrdersService:
         return OrderSchema().dump(order).data
     
     @rpc
-    def dumb_list(self, *orders_id):
-        # Realy, don't use it... it's an emergency method if I can't find in doc :|
-        # Let's be honest, if was supposed to be in pure SQL, was something like SELECT (db.fields) FROM Orders O WHERE O.id IN (fields list) which will be optimal
-        orders_list = []
-        for order_id in orders_id:
-            order = self.db.query(Order).get(order_id)
-            if order is not None:
-                list.append(order)
-        return orders_list
+    def get_list_order(self): # (teixa) Can be improved by setting a number parameter for pagination reducing load for page
+        order_list = self.db.query(Order).all()
+        order_list_response = []
+
+        if len(order_list) == 0:
+            raise NotFound('No Orders were found')
+        
+        for order in order_list:
+            order_list_response.append(OrderSchema().dump(order).data)
+        
+        return order_list_response
 
     @rpc
     def create_order(self, order_details):

@@ -12,8 +12,8 @@
 - [] (bonus) Wire into perf-test
 - [] (bonus) Wire unit-test for this method
 ## Enhance order service
-- [] List orders rpc call
-- [] Wire into smoketest.sh
+- [X] List orders rpc call
+- [X] Wire into smoketest.sh
 - [] (bonus) Wire into perf-test
 - [] (bonus) Wire unit-test for this method
 - [] Execute performance test

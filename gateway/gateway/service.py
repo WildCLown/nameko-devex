@@ -99,13 +99,28 @@ class GatewayService(object):
             mimetype='application/json'
         )
 
-    def _get_order(self, order_id): # (teixa) Unecessary encapsule?
+    def _get_order(self, order_id):
         # Retrieve order data from the orders service.
         # Note - this may raise a remote exception that has been mapped to
         # raise``OrderNotFound``
         order = self.orders_rpc.get_order(order_id)
 
-        # Retrieve all products from the products service
+        return self.fill_order_products(self, order)
+    
+    @http("GET", "/orders/list")
+    def get_list_order(self, request):
+        odersList = []
+        orders = self.orders_rpc.get_list_order()
+
+        for order in orders:
+            odersList.append(GetOrderSchema().dumps(self.fill_order_products(order)).data)
+
+        return Response(
+            odersList,
+            mimetype='application/json'
+        )
+
+    def fill_order_products(self, order):
         product_map = {prod['id']: prod for prod in self.products_rpc.list()}
 
         # get the configured image root
@@ -118,9 +133,8 @@ class GatewayService(object):
             item['product'] = product_map[product_id]
             # Construct an image url.
             item['image'] = '{}/{}.jpg'.format(image_root, product_id)
-
+        
         return order
-
 
     @http( # (teixa) AFAIK '/orders' would be the list orders, /orders/create would create one, /orders/{id} would query one
         "POST", "/orders",

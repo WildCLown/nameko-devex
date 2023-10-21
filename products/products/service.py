@@ -36,7 +36,6 @@ class ProductsService:
         if product is None:
             raise NotFound('Order with id {} not found'.format(product_id))
         self.storage.delete_one(product_id)
-    # An more restrictive approach, in order to get to know if value was previously present
 
     @event_handler('orders', 'order_created')
     def handle_order_created(self, payload):

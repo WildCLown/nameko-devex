@@ -42,9 +42,17 @@ curl -s "${STD_APP_URL}/products/the_odyssey" | jq .
 echo "=== Deleting product id: the_odyssey ==="
 curl -s "${STD_APP_URL}/products/delete/the_odyssey" | jq .
 
+# Test: Delete Product
+echo "=== Deleting inexist product id: the_odyssey ==="
+curl -s "${STD_APP_URL}/products/delete/the_odyssey" | jq .
+echo "######### SEPARATE RAISE #############" 
+echo "######### SEPARATE RAISE #############" 
+
 # Test: Get Product again to check if still exists
 echo "=== Getting product id: the_odyssey ==="
 curl -s "${STD_APP_URL}/products/the_odyssey" | jq .
+echo "######### SEPARATE RAISE #############" 
+echo "######### SEPARATE RAISE #############" 
 
 # Test: Create Product again Products
 echo "=== Creating a product again with id: the_odyssey ==="
@@ -59,7 +67,18 @@ echo "=== Getting product id: the_odyssey ==="
 curl -s "${STD_APP_URL}/products/the_odyssey" | jq .
 
 # Test: Create Order
-echo "=== Creating Order ==="
+echo "=== Creating first Order ==="
+ORDER_ID=$(
+    curl -s -XPOST "${STD_APP_URL}/orders" \
+    -H 'accept: application/json' \
+    -H 'Content-Type: application/json' \
+    -d '{"order_details": [{"product_id": "the_odyssey", "price": "100000.99", "quantity": 1}]}' 
+)
+echo ${ORDER_ID}
+ID=$(echo ${ORDER_ID} | jq '.id')
+
+# Test: Create Order
+echo "=== Creating second Order ==="
 ORDER_ID=$(
     curl -s -XPOST "${STD_APP_URL}/orders" \
     -H 'accept: application/json' \
@@ -72,3 +91,7 @@ ID=$(echo ${ORDER_ID} | jq '.id')
 # Test: Get Order back
 echo "=== Getting Order ==="
 curl -s "${STD_APP_URL}/orders/${ID}" | jq .
+
+# Test: Get Order List back
+echo "=== Getting Order list ==="
+curl -s "${STD_APP_URL}/orders/list" | jq .

@@ -1,7 +1,7 @@
 from os import name
 from fastapi import APIRouter, status, HTTPException
 from fastapi.params import Depends
-from typing import List
+from typing import List, Self
 from gateapi.api import schemas
 from gateapi.api.dependencies import get_rpc, config
 from .exceptions import OrderNotFound
@@ -10,6 +10,21 @@ router = APIRouter(
     prefix = "/orders",
     tags = ['Orders']
 )
+
+@router.get("/list", status_code=status.HTTP_200_OK)
+def get_list_order(rpc = Depends(get_rpc)):
+    try:
+        with rpc.next() as nameko:
+            orders = nameko.orders.get_list_order()
+        response_list = []
+        for order in orders:
+            list.append(fill_order_products(order, rpc))
+        return response_list
+    except OrderNotFound as error:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(error)
+        )
 
 @router.get("/{order_id}", status_code=status.HTTP_200_OK)
 def get_order(order_id: int, rpc = Depends(get_rpc)):
@@ -28,6 +43,9 @@ def _get_order(order_id, nameko_rpc):
     with nameko_rpc.next() as nameko:
         order = nameko.orders.get_order(order_id)
 
+    return fill_order_products(order, nameko_rpc)
+
+def fill_order_products(order, nameko_rpc):
     # Retrieve all products from the products service
     with nameko_rpc.next() as nameko:
         product_map = {prod['id']: prod for prod in nameko.products.list()}
@@ -44,6 +62,7 @@ def _get_order(order_id, nameko_rpc):
         item['image'] = '{}/{}.jpg'.format(image_root, product_id)
 
     return order
+
 
 @router.post("", status_code=status.HTTP_200_OK, response_model=schemas.CreateOrderSuccess)
 def create_order(request: schemas.CreateOrder, rpc = Depends(get_rpc)):
