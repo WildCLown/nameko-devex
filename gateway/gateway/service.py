@@ -105,7 +105,7 @@ class GatewayService(object):
         # raise``OrderNotFound``
         order = self.orders_rpc.get_order(order_id)
 
-        return self.fill_order_products(self, order)
+        return self.fill_order_products(order)
     
     @http("GET", "/orders/list")
     def get_list_order(self, request):

@@ -45,14 +45,16 @@ curl -s "${STD_APP_URL}/products/delete/the_odyssey" | jq .
 # Test: Delete Product
 echo "=== Deleting inexist product id: the_odyssey ==="
 curl -s "${STD_APP_URL}/products/delete/the_odyssey" | jq .
+echo
 echo "######### SEPARATE RAISE #############" 
-echo "######### SEPARATE RAISE #############" 
+echo
 
 # Test: Get Product again to check if still exists
-echo "=== Getting product id: the_odyssey ==="
+echo "=== Getting Inexist product id: the_odyssey ==="
 curl -s "${STD_APP_URL}/products/the_odyssey" | jq .
-echo "######### SEPARATE RAISE #############" 
-echo "######### SEPARATE RAISE #############" 
+echo
+echo "######### SEPARATE RAISE #############"
+echo
 
 # Test: Create Product again Products
 echo "=== Creating a product again with id: the_odyssey ==="
@@ -92,6 +94,6 @@ ID=$(echo ${ORDER_ID} | jq '.id')
 echo "=== Getting Order ==="
 curl -s "${STD_APP_URL}/orders/${ID}" | jq .
 
-# Test: Get Order List back
-echo "=== Getting Order list ==="
-curl -s "${STD_APP_URL}/orders/list" | jq .
+# # Test: Get Order List back
+# echo "=== Getting Order list ==="
+# curl -s "${STD_APP_URL}/orders/list" | jq .
