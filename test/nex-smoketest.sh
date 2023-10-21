@@ -46,6 +46,18 @@ curl -s "${STD_APP_URL}/products/delete/the_odyssey" | jq .
 echo "=== Getting product id: the_odyssey ==="
 curl -s "${STD_APP_URL}/products/the_odyssey" | jq .
 
+# Test: Create Product again Products
+echo "=== Creating a product again with id: the_odyssey ==="
+curl -s -XPOST  "${STD_APP_URL}/products" \
+    -H 'accept: application/json' \
+    -H 'Content-Type: application/json' \
+    -d '{"id": "the_odyssey", "title": "The Odyssey", "passenger_capacity": 101, "maximum_speed": 5, "in_stock": 10}'
+echo
+
+# Test: Get Product again to check if exists
+echo "=== Getting product id: the_odyssey ==="
+curl -s "${STD_APP_URL}/products/the_odyssey" | jq .
+
 # Test: Create Order
 echo "=== Creating Order ==="
 ORDER_ID=$(

@@ -36,9 +36,9 @@ class GatewayService(object):
         )
     
     @http(
-        "GET", "/products/delete/<string:product_id>",
+        "GET", "/products/delete/<string:product_id>", #change later to DELETE request
         expected_exceptions=ProductInvalidArgument
-    ) # FIX TO SET AS DELETE LATER
+    )
     def delete_product(self, request, product_id):
         self.products_rpc.delete_one(product_id)
         return Response(
@@ -99,7 +99,7 @@ class GatewayService(object):
             mimetype='application/json'
         )
 
-    def _get_order(self, order_id):
+    def _get_order(self, order_id): # (teixa) Unecessary encapsule?
         # Retrieve order data from the orders service.
         # Note - this may raise a remote exception that has been mapped to
         # raise``OrderNotFound``
@@ -121,7 +121,8 @@ class GatewayService(object):
 
         return order
 
-    @http(
+
+    @http( # (teixa) AFAIK '/orders' would be the list orders, /orders/create would create one, /orders/{id} would query one
         "POST", "/orders",
         expected_exceptions=(ValidationError, ProductNotFound, BadRequest)
     )

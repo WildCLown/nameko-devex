@@ -20,7 +20,7 @@ def get_product(product_id: str, rpc = Depends(get_rpc)):
             detail=str(error)
         )
     
-@router.delete("/delete/{product_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.get("/delete/{product_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_product(product_id: str, rpc = Depends(get_rpc)):
     try:
         with rpc.next() as nameko:
