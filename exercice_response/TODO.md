@@ -18,7 +18,7 @@
 - [X] List orders rpc call
 - [X] Wire into smoketest.sh | -> ./test/nex-smoketest.sh local 
 - [X] (bonus) Wire into perf-test |-> ./test/nex-bzt.sh local
-- [ ] (bonus) Wire unit-test for this method
+- [X] (bonus) Wire unit-test for this method
 - [X] Execute performance test
 - [X] Question 1: Why is performance degrading as the test run longer?
 
@@ -30,15 +30,23 @@ But when the test just starts, we have the response time increasing, consider on
 
 This problem may be caused due to certain reasons:
 
-Poor Algorithm data Handling
+<details>
+    <summary>
+        Poor Algorithm data Handling (NOTE IT'S EXPANDABLE MD AAAAAA)
+    </summary>
     - Probably not the case, request response are pretty simple here
 Poor Framework integration or use of wrong functions
     - Here got little confused about Redis integration, and if it would be better use of Postgres instead of adding another framework and a layer of complexity
-Non-optimal use of Messaging system
+</details>
+<details>
+    <summary>
+        Non-optimal use of Messaging system (NOTE IT'S EXPANDABLE MD AAAAAA)
+    </summary>
     - Here I'm kind curious, didn't find out RabbitMq parameters, if it's basic parameters, as far as I know it's a single queue, but for this case, we may use multiple queues poiting to certain consumers
     Example: If scaling was like 6 clients, would make 6 queues and 3 consumers in order to avoid system being ocious and being overloaded. 
 Pod configuration in K8s
     - Due to scalability, Pods may be created to auto-scale, I'll not take a look here due do time, I'm not used to K8s, but am interested
+</details>
 
 Not fixing but Knowledge
 this is the graph after setting listing in performance:
@@ -48,6 +56,7 @@ this is the graph after setting listing in performance:
     <summary>
         Besides the following error, enviroment doesn't show
         Some of order creation execution fails with the error:
+        (NOTE IT'S EXPANDABLE MD AAAAAA)
     </summary>
 
         error handling worker <WorkerContext [products.list] at 0x7f83151a0410>: b'id'

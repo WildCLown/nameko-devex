@@ -14,6 +14,22 @@ def order(db_session):
     db_session.commit()
     return order
 
+@pytest.fixture
+def multiple_inserts(db_session, range_list = 3):
+    order_list = []
+    for _ in range(range_list):
+        order_list.append(Order())
+    db_session.add_all(order_list)
+    db_session.commit()
+
+@pytest.fixture
+def heavy_multiple_inserts(db_session, range_list = 10):
+    order_list = []
+    for _ in range(range_list):
+        order_list.append(Order())
+    db_session.add_all(order_list)
+    db_session.commit()
+
 
 @pytest.fixture
 def order_details(db_session, order):
@@ -33,6 +49,38 @@ def test_get_order(orders_rpc, order):
     response = orders_rpc.get_order(1)
     assert response['id'] == order.id
 
+def test_get_list_order_no_orders(orders_rpc, page = 1):
+
+    with pytest.raises(RemoteError) as err:
+        orders_rpc.get_list_order(page)
+    assert err.value.value == 'No Orders were found'
+
+def test_get_list_order_invalid_page(orders_rpc, page = 0):
+
+    with pytest.raises(RemoteError) as err:
+        orders_rpc.get_list_order(page)
+    assert err.value.value == 'Invalid page number given'
+
+@pytest.mark.usefixtures('multiple_inserts')
+def test_get_list_order(orders_rpc, page = 1):
+    response = orders_rpc.get_list_order(page)
+    assert len(response) == 3
+    assert response == [
+        {'id': 1, 'order_details': []},
+        {'id': 2, 'order_details': []},
+        {'id': 3, 'order_details': []}
+    ]
+@pytest.mark.usefixtures('heavy_multiple_inserts')
+def test_get_list_order_heavy_db(orders_rpc, page = 1):
+    response = orders_rpc.get_list_order(page)
+    assert len(response) == 5
+    assert response == [
+        {'id': 1, 'order_details': []},
+        {'id': 2, 'order_details': []},
+        {'id': 3, 'order_details': []},
+        {'id': 4, 'order_details': []},
+        {'id': 5, 'order_details': []}
+    ]
 
 @pytest.mark.usefixtures('db_session')
 def test_will_raise_when_order_not_found(orders_rpc):

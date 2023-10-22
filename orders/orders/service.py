@@ -24,6 +24,8 @@ class OrdersService:
     
     @rpc
     def get_list_order(self, page_number):
+        if page_number < 1:
+            raise  ValueError('Invalid page number given')
         order_list = self.db.query(Order).limit(5).offset((page_number-1)*5).all()
         order_list_response = []
 

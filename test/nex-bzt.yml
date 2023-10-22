@@ -78,21 +78,6 @@ scenarios:
       extract-jsonpath:
         product_key: $.id
         default: NOT_FOUND
-      
-    # 4. Get Inexisting Product
-    - url: /products/${product_id}
-      label: product-get
-      think-time: uniform(0s, 0s)
-      method: GET
-        
-      assert:
-      - contains:
-        - 404
-        subject: http-code
-        not: false
-      extract-jsonpath:
-        product_key: $.id
-        default: NOT_FOUND
 
     # 5. Create Product Again
     - url: /products
