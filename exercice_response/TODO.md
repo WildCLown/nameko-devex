@@ -1,16 +1,19 @@
 # TODO LIST
 
 # 1. Follow README-DevEnv.md to setup dev environment for exercise
+
 - [x] Able to run locally, debug, unit-test
 - [x] Able to smoke-test and performance test
 
 
 # Do the following tasks:
-## Enhance product service
-- [X] Delete product rpc call
+### Enhance product service
+
+- [x] Delete product rpc call
 - [X] Wire into smoketest.sh | -> ./test/nex-smoketest.sh local 
 - [X] (bonus) Wire into perf-test | -> ./test/nex-bzt.sh local
-- [ ] (bonus) Wire unit-test for this method
+- [X] (bonus) Wire unit-test for this method | -> ./dev_pytest.sh
+
 ## Enhance order service
 - [X] List orders rpc call
 - [X] Wire into smoketest.sh | -> ./test/nex-smoketest.sh local 
@@ -18,6 +21,7 @@
 - [ ] (bonus) Wire unit-test for this method
 - [X] Execute performance test
 - [X] Question 1: Why is performance degrading as the test run longer?
+
 After a while the system becomes stable as we see a stable graphic like the following one:
 ![Performance Test](./wine_area.png)
 

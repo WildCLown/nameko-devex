@@ -36,6 +36,7 @@ class ProductsService:
         if product is None:
             raise NotFound('Order with id {} not found'.format(product_id))
         self.storage.delete_one(product_id)
+        return {"deleted_id": product_id}
 
     @event_handler('orders', 'order_created')
     def handle_order_created(self, payload):

@@ -35,7 +35,6 @@ def test_list(storage, products):
 
 
 def test_create(product, redis_client, storage):
-
     storage.create(product)
 
     stored_product = redis_client.hgetall('products:LZ127')
@@ -47,6 +46,23 @@ def test_create(product, redis_client, storage):
         int(stored_product[b'passenger_capacity']))
     assert product['in_stock'] == int(stored_product[b'in_stock'])
 
+def test_delete(product, redis_client, storage):
+    storage.create(product)
+
+    stored_product = redis_client.hgetall('products:LZ127')
+
+    # (teixa) Asserts that the product exists in fact before showing that it doesn't
+    assert product['id'] == stored_product[b'id'].decode('utf-8')
+    assert product['title'] == stored_product[b'title'].decode('utf-8')
+    assert product['maximum_speed'] == int(stored_product[b'maximum_speed'])
+    assert product['passenger_capacity'] == (
+        int(stored_product[b'passenger_capacity']))
+    assert product['in_stock'] == int(stored_product[b'in_stock'])
+
+    redis_client.delete('products:LZ127')
+    inexist_product = redis_client.hgetall('products:LZ127')
+
+    assert inexist_product == {}
 
 def test_decrement_stock(storage, create_product, redis_client):
     create_product(id=1, title='LZ 127', in_stock=10)
