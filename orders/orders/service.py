@@ -21,6 +21,21 @@ class OrdersService:
             raise NotFound('Order with id {} not found'.format(order_id))
 
         return OrderSchema().dump(order).data
+    
+    @rpc
+    def get_list_order(self, page_number):
+        if page_number < 1:
+            raise  ValueError('Invalid page number given')
+        order_list = self.db.query(Order).limit(5).offset((page_number-1)*5).all()
+        order_list_response = []
+
+        if len(order_list) == 0:
+            raise NotFound('No Orders were found')
+        
+        for order in order_list:
+            order_list_response.append(OrderSchema().dump(order).data)
+        
+        return order_list_response
 
     @rpc
     def create_order(self, order_details):

@@ -1,4 +1,4 @@
-import json
+import json, logging
 
 from marshmallow import ValidationError
 from nameko import config
@@ -7,9 +7,10 @@ from nameko.rpc import RpcProxy
 from werkzeug import Response
 
 from gateway.entrypoints import http
-from gateway.exceptions import OrderNotFound, ProductNotFound
+from gateway.exceptions import OrderNotFound, ProductNotFound, ProductInvalidArgument
 from gateway.schemas import CreateOrderSchema, GetOrderSchema, ProductSchema
 
+logger = logging.getLogger(__name__)
 
 class GatewayService(object):
     """
@@ -31,6 +32,17 @@ class GatewayService(object):
         product = self.products_rpc.get(product_id)
         return Response(
             ProductSchema().dumps(product).data,
+            mimetype='application/json'
+        )
+    
+    @http(
+        "GET", "/products/delete/<string:product_id>", #change later to DELETE request
+        expected_exceptions=ProductInvalidArgument
+    )
+    def delete_product(self, request, product_id):
+        self.products_rpc.delete_one(product_id)
+        return Response(
+            json.dumps({'status': 'ok'}),
             mimetype='application/json'
         )
 
@@ -93,7 +105,22 @@ class GatewayService(object):
         # raise``OrderNotFound``
         order = self.orders_rpc.get_order(order_id)
 
-        # Retrieve all products from the products service
+        return self.fill_order_products(order)
+    
+    @http("GET", "/orders/list/<int:page_num>")
+    def get_list_order(self, request, page_num):
+        odersList = []
+        orders = self.orders_rpc.get_list_order(page_num)
+
+        for order in orders:
+            odersList.append(GetOrderSchema().dumps(self.fill_order_products(order)).data)
+
+        return Response(
+            odersList,
+            mimetype='application/json'
+        )
+
+    def fill_order_products(self, order):
         product_map = {prod['id']: prod for prod in self.products_rpc.list()}
 
         # get the configured image root
@@ -106,10 +133,10 @@ class GatewayService(object):
             item['product'] = product_map[product_id]
             # Construct an image url.
             item['image'] = '{}/{}.jpg'.format(image_root, product_id)
-
+        
         return order
 
-    @http(
+    @http( # (teixa) AFAIK '/orders' would be the list orders, /orders/create would create one, /orders/{id} would query one
         "POST", "/orders",
         expected_exceptions=(ValidationError, ProductNotFound, BadRequest)
     )
