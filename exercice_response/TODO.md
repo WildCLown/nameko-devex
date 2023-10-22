@@ -28,6 +28,9 @@ After a while the system becomes stable as we see a stable graphic like the foll
 But when the test just starts, we have the response time increasing, consider only the red area, as before connecting 3 individuals, it's unfair to take a look:
 ![Performance Test early](./image2.png)
 
+Which is more evident when we see messages quantity
+![Messages image](./requests.png)
+
 This problem may be caused due to certain reasons:
 
 <details>
