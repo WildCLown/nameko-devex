@@ -107,10 +107,10 @@ class GatewayService(object):
 
         return self.fill_order_products(order)
     
-    @http("GET", "/orders/list")
-    def get_list_order(self, request):
+    @http("GET", "/orders/list/<int:page_num>")
+    def get_list_order(self, request, page_num):
         odersList = []
-        orders = self.orders_rpc.get_list_order()
+        orders = self.orders_rpc.get_list_order(page_num)
 
         for order in orders:
             odersList.append(GetOrderSchema().dumps(self.fill_order_products(order)).data)

@@ -23,8 +23,8 @@ class OrdersService:
         return OrderSchema().dump(order).data
     
     @rpc
-    def get_list_order(self): # (teixa) Can be improved by setting a number parameter for pagination reducing load for page
-        order_list = self.db.query(Order).all()
+    def get_list_order(self, page_number):
+        order_list = self.db.query(Order).limit(5).offset((page_number-1)*5).all()
         order_list_response = []
 
         if len(order_list) == 0:

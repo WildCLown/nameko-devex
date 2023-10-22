@@ -11,8 +11,12 @@ router = APIRouter(
     tags = ['Orders']
 )
 
-@router.get("/list", status_code=status.HTTP_200_OK)
-def get_list_order(rpc = Depends(get_rpc)):
+@router.get("/list/{page_num}", status_code=status.HTTP_200_OK)
+def get_list_order(page_num: int, rpc = Depends(get_rpc)):
+    if page_num < 1:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST
+        )
     try:
         with rpc.next() as nameko:
             orders = nameko.orders.get_list_order()
